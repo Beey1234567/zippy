@@ -81,40 +81,6 @@ void build_zip_bomb_thread(int threadId, long long filesPerThread) {
 }
 
 int main() {
-    // 1. Detect your hardware limits to deploy the exact maximum threads your CPU supports safely
-    const unsigned int hardwareThreads = std::thread::hardware_concurrency();
-    const unsigned int safeThreads = (hardwareThreads > 0) ? hardwareThreads : 8; // Fallback to 8 if detection fails
-    
-    // 2. Set your massive target total count using a 64-bit 'long long' literal (LL)
-    // You can safely set this into the millions or billions now without crashing!
-    const long long totalFilesToTarget = 100000000000LL; 
-    
-    // Divide the massive work evenly across your safe thread count
-    long long filesPerThread = totalFilesToTarget / safeThreads;
-
-    std::vector<std::thread> threadPool;
-
-    std::cout << "========== CONCURRENT BLOCK INITIATED ==========\n";
-    std::cout << "Deploying " << safeThreads << " safe CPU threads...\n";
-    std::cout << "Each individual thread will process " << filesPerThread << " files sequentially.\n\n";
-
-    // Launch the threads safely
-    for (unsigned int i = 0; i < safeThreads; ++i) {
-        threadPool.push_back(std::thread(build_zip_bomb_thread, i, filesPerThread));
-    }
-
-    // Await thread completion
-    for (auto& t : threadPool) {
-        if (t.joinable()) {
-            t.join();
-        }
-    }
-
-    std::cout << "\n========== TARGET TERMINATION COMPLETE ==========\n";
-    return 0;
-}
-
-int main() {
     const unsigned int hardwareThreads = std::thread::hardware_concurrency();
     const unsigned int safeThreads = (hardwareThreads > 0) ? hardwareThreads : 8;
 
