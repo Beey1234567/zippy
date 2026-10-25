@@ -1,0 +1,19 @@
+# VS code junk
+
+.vscode/
+
+# Windows junk
+
+Thumbs.db
+
+thumbs.db
+
+# MacOS junk
+
+.DS_Store
+
+# Linux junk
+
+.Trash-*
+
+.nfs*
