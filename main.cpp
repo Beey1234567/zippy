@@ -19,13 +19,12 @@ void build_zip_bomb_thread(int threadId, long long filesPerThread) {
     std::ofstream zipFile(archiveName, std::ios::binary);
     if (!zipFile) {
         std::lock_guard<std::mutex> lock(consoleMutex);
-        std::cerr << "[Thread " << threadId << "] Error creating local master binary file!\n";
+        std::cerr << "[Thread " << threadId << "] err created master binary\n";
         return;
     }
 
     std::vector<FileMetadata> archiveTracker;
 
-    // Define the core repeating payload block (1 Megabyte of raw data characters)
     std::string testPayload(1000000, '0'); 
     uint32_t computedCrc = calculate_crc32(testPayload);
 
@@ -72,7 +71,7 @@ void build_zip_bomb_thread(int threadId, long long filesPerThread) {
 
     {
         std::lock_guard<std::mutex> lock(consoleMutex);
-        std::cout << "[Thread " << threadId << "] Successfully generated " << filesPerThread << " files sequentially.\n";
+        std::cout << "Generated files.";
     }
 }
 
